@@ -8,9 +8,9 @@ final class FavoritesViewModel {
 
     let favorites: Driver<[PostDisplayModel]>
 
-    private let realmManager: RealmManagerProtocol
+    private let realmManager: FavoritesStorageProtocol
 
-    init(realmManager: RealmManagerProtocol = RealmManager.shared) {
+    init(realmManager: FavoritesStorageProtocol = RealmManager.shared) {
         self.realmManager = realmManager
 
         if let results = realmManager.favoritePosts() {

@@ -3,15 +3,18 @@ import RealmSwift
 import RxSwift
 import RxRealm
 
-protocol RealmManagerProtocol {
+protocol PostStorageProtocol {
     func savePosts(_ dtos: [PostDTO])
     func allPosts() -> Results<PostObject>?
-    func favoritePosts() -> Results<PostObject>?
     func toggleFavorite(postId: Int)
+}
+
+protocol FavoritesStorageProtocol {
+    func favoritePosts() -> Results<PostObject>?
     func removeFromFavorites(postId: Int)
 }
 
-final class RealmManager: RealmManagerProtocol {
+final class RealmManager: PostStorageProtocol, FavoritesStorageProtocol {
     static let shared = RealmManager()
 
     private let realm: Realm?

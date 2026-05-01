@@ -17,7 +17,7 @@ final class PostsViewModel {
 
     // MARK: - Dependencies
     private let network: NetworkManagerProtocol
-    private let realmManager: RealmManagerProtocol
+    private let realmManager: PostStorageProtocol
     private let session: UserSessionManagerProtocol
 
     private let disposeBag = DisposeBag()
@@ -26,7 +26,7 @@ final class PostsViewModel {
 
     init(
         network: NetworkManagerProtocol = NetworkManager.shared,
-        realmManager: RealmManagerProtocol = RealmManager.shared,
+        realmManager: PostStorageProtocol = RealmManager.shared,
         session: UserSessionManagerProtocol = UserSessionManager.shared
     ) {
         self.network = network
