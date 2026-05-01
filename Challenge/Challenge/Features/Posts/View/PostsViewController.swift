@@ -4,6 +4,19 @@ import RxCocoa
 
 final class PostsViewController: UIViewController {
 
+    // MARK: - Layout Constants
+    private enum Layout {
+        static let estimatedRowHeight: CGFloat = 90
+        static let toastHorizontalInset: CGFloat = 32
+        static let toastBottomInset: CGFloat = 20
+        static let toastHeight: CGFloat = 40
+        static let toastCornerRadius: CGFloat = 10
+        static let toastFontSize: CGFloat = 13
+        static let toastAnimationDelay: TimeInterval = 2.5
+        static let toastAnimationDuration: TimeInterval = 0.3
+        static let transitionDuration: TimeInterval = 0.3
+    }
+
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let viewModel = PostsViewModel()
@@ -15,7 +28,7 @@ final class PostsViewController: UIViewController {
         tv.backgroundColor = .appSurface
         tv.register(PostTableViewCell.self, forCellReuseIdentifier: PostTableViewCell.reuseID)
         tv.rowHeight = UITableView.automaticDimension
-        tv.estimatedRowHeight = 90
+        tv.estimatedRowHeight = Layout.estimatedRowHeight
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
     }()
@@ -32,7 +45,7 @@ final class PostsViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Posts"
+        title = Strings.Posts.tabTitle
         view.backgroundColor = .appSurface
         setupNavigationBar()
         setupLayout()
@@ -43,7 +56,7 @@ final class PostsViewController: UIViewController {
     // MARK: - Setup
     private func setupNavigationBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Logout",
+            title: Strings.Posts.logoutButton,
             style: .plain,
             target: self,
             action: #selector(logoutTapped)
@@ -113,9 +126,13 @@ final class PostsViewController: UIViewController {
 
     // MARK: - Actions
     @objc private func logoutTapped() {
-        let alert = UIAlertController(title: "Logout", message: "Are you sure?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Logout", style: .destructive) { [weak self] _ in
+        let alert = UIAlertController(
+            title: Strings.Posts.logoutAlertTitle,
+            message: Strings.Posts.logoutAlertMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: Strings.Posts.cancel, style: .cancel))
+        alert.addAction(UIAlertAction(title: Strings.Posts.logoutButton, style: .destructive) { [weak self] _ in
             self?.viewModel.logoutTap.accept(())
         })
         present(alert, animated: true)
@@ -126,7 +143,7 @@ final class PostsViewController: UIViewController {
               let window = appDelegate.window else { return }
         let nav = UINavigationController(rootViewController: LoginViewController())
         window.rootViewController = nav
-        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil)
+        UIView.transition(with: window, duration: Layout.transitionDuration, options: .transitionCrossDissolve, animations: nil)
     }
 
     // MARK: - Toast
@@ -135,22 +152,26 @@ final class PostsViewController: UIViewController {
         toast.text = message
         toast.textColor = .white
         toast.backgroundColor = UIColor.black.withAlphaComponent(0.75)
-        toast.font = .systemFont(ofSize: 13)
+        toast.font = .systemFont(ofSize: Layout.toastFontSize)
         toast.textAlignment = .center
-        toast.layer.cornerRadius = 10
+        toast.layer.cornerRadius = Layout.toastCornerRadius
         toast.layer.masksToBounds = true
         toast.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(toast)
         NSLayoutConstraint.activate([
-            toast.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            toast.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-            toast.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            toast.heightAnchor.constraint(equalToConstant: 40)
+            toast.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.toastHorizontalInset),
+            toast.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Layout.toastHorizontalInset),
+            toast.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Layout.toastBottomInset),
+            toast.heightAnchor.constraint(equalToConstant: Layout.toastHeight)
         ])
 
-        UIView.animate(withDuration: 0.3, delay: 2.5, options: .curveEaseOut, animations: {
-            toast.alpha = 0
-        }, completion: { _ in toast.removeFromSuperview() })
+        UIView.animate(
+            withDuration: Layout.toastAnimationDuration,
+            delay: Layout.toastAnimationDelay,
+            options: .curveEaseOut,
+            animations: { toast.alpha = 0 },
+            completion: { _ in toast.removeFromSuperview() }
+        )
     }
 }

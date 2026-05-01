@@ -11,14 +11,14 @@ final class MainTabBarController: UITabBarController {
     private func setupTabs() {
         let postsNav = UINavigationController(rootViewController: PostsViewController())
         postsNav.tabBarItem = UITabBarItem(
-            title: "Posts",
+            title: Strings.Posts.tabTitle,
             image: UIImage(systemName: "list.bullet.rectangle"),
             selectedImage: UIImage(systemName: "list.bullet.rectangle.fill")
         )
 
         let favoritesNav = UINavigationController(rootViewController: FavoritesViewController())
         favoritesNav.tabBarItem = UITabBarItem(
-            title: "Favorites",
+            title: Strings.Favorites.tabTitle,
             image: UIImage(systemName: "heart"),
             selectedImage: UIImage(systemName: "heart.fill")
         )

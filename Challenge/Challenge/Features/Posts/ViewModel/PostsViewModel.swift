@@ -60,7 +60,7 @@ final class PostsViewModel {
                 },
                 onFailure: { [weak self] _ in
                     self?.loadingRelay.accept(false)
-                    self?.errorRelay.accept("Could not refresh — showing cached posts")
+                    self?.errorRelay.accept(Strings.Posts.refreshError)
                 }
             )
             .disposed(by: disposeBag)

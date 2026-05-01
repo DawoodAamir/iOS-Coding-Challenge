@@ -4,6 +4,28 @@ import RxCocoa
 
 final class LoginViewController: UIViewController {
 
+    // MARK: - Layout Constants
+    private enum Layout {
+        static let iconTopSpacing: CGFloat = 60
+        static let iconSize: CGFloat = 72
+        static let titleTopSpacing: CGFloat = 20
+        static let horizontalPadding: CGFloat = 24
+        static let subtitleTopSpacing: CGFloat = 8
+        static let fieldGroupTopSpacing: CGFloat = 40
+        static let fieldHeight: CGFloat = 54
+        static let errorLabelTopSpacing: CGFloat = 4
+        static let errorLabelLeadingInset: CGFloat = 4
+        static let fieldSpacing: CGFloat = 12
+        static let buttonTopSpacing: CGFloat = 32
+        static let bottomSpacing: CGFloat = 40
+        static let fieldCornerRadius: CGFloat = 12
+        static let fieldLeftPadding: CGFloat = 16
+        static let titleFontSize: CGFloat = 28
+        static let bodyFontSize: CGFloat = 16
+        static let captionFontSize: CGFloat = 12
+        static let transitionDuration: TimeInterval = 0.3
+    }
+
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let viewModel = LoginViewModel()
@@ -32,8 +54,8 @@ final class LoginViewController: UIViewController {
 
     private let titleLabel: UILabel = {
         let l = UILabel()
-        l.text = "Welcome Back"
-        l.font = .systemFont(ofSize: 28, weight: .bold)
+        l.text = Strings.Login.title
+        l.font = .systemFont(ofSize: Layout.titleFontSize, weight: .bold)
         l.textAlignment = .center
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
@@ -41,8 +63,8 @@ final class LoginViewController: UIViewController {
 
     private let subtitleLabel: UILabel = {
         let l = UILabel()
-        l.text = "Sign in to continue"
-        l.font = .systemFont(ofSize: 16, weight: .regular)
+        l.text = Strings.Login.subtitle
+        l.font = .systemFont(ofSize: Layout.bodyFontSize, weight: .regular)
         l.textColor = .secondaryLabel
         l.textAlignment = .center
         l.translatesAutoresizingMaskIntoConstraints = false
@@ -51,24 +73,24 @@ final class LoginViewController: UIViewController {
 
     private let emailField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Email address"
+        tf.placeholder = Strings.Login.emailPlaceholder
         tf.keyboardType = .emailAddress
         tf.autocapitalizationType = .none
         tf.autocorrectionType = .no
         tf.borderStyle = .none
         tf.backgroundColor = .appCardBackground
-        tf.layer.cornerRadius = 12
+        tf.layer.cornerRadius = Layout.fieldCornerRadius
         tf.layer.masksToBounds = true
-        tf.setLeftPadding(16)
-        tf.font = .systemFont(ofSize: 16)
+        tf.setLeftPadding(Layout.fieldLeftPadding)
+        tf.font = .systemFont(ofSize: Layout.bodyFontSize)
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
     }()
 
     private let emailErrorLabel: UILabel = {
         let l = UILabel()
-        l.text = "Enter a valid email address"
-        l.font = .systemFont(ofSize: 12)
+        l.text = Strings.Login.emailError
+        l.font = .systemFont(ofSize: Layout.captionFontSize)
         l.textColor = .systemRed
         l.isHidden = true
         l.translatesAutoresizingMaskIntoConstraints = false
@@ -77,22 +99,22 @@ final class LoginViewController: UIViewController {
 
     private let passwordField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Password (8–15 characters)"
+        tf.placeholder = Strings.Login.passwordPlaceholder
         tf.isSecureTextEntry = true
         tf.borderStyle = .none
         tf.backgroundColor = .appCardBackground
-        tf.layer.cornerRadius = 12
+        tf.layer.cornerRadius = Layout.fieldCornerRadius
         tf.layer.masksToBounds = true
-        tf.setLeftPadding(16)
-        tf.font = .systemFont(ofSize: 16)
+        tf.setLeftPadding(Layout.fieldLeftPadding)
+        tf.font = .systemFont(ofSize: Layout.bodyFontSize)
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
     }()
 
     private let passwordErrorLabel: UILabel = {
         let l = UILabel()
-        l.text = "Password must be 8–15 characters"
-        l.font = .systemFont(ofSize: 12)
+        l.text = Strings.Login.passwordError
+        l.font = .systemFont(ofSize: Layout.captionFontSize)
         l.textColor = .systemRed
         l.isHidden = true
         l.translatesAutoresizingMaskIntoConstraints = false
@@ -101,7 +123,7 @@ final class LoginViewController: UIViewController {
 
     private let submitButton: UIButton = {
         var config = UIButton.Configuration.filled()
-        config.title = "Sign In"
+        config.title = Strings.Login.signIn
         config.cornerStyle = .large
         config.baseBackgroundColor = .appPrimary
         config.baseForegroundColor = .white
@@ -146,40 +168,40 @@ final class LoginViewController: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
 
-            iconImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 60),
+            iconImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Layout.iconTopSpacing),
             iconImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            iconImageView.widthAnchor.constraint(equalToConstant: 72),
-            iconImageView.heightAnchor.constraint(equalToConstant: 72),
+            iconImageView.widthAnchor.constraint(equalToConstant: Layout.iconSize),
+            iconImageView.heightAnchor.constraint(equalToConstant: Layout.iconSize),
 
-            titleLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
+            titleLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: Layout.titleTopSpacing),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.horizontalPadding),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Layout.horizontalPadding),
 
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Layout.subtitleTopSpacing),
             subtitleLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
-            emailField.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 40),
-            emailField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            emailField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            emailField.heightAnchor.constraint(equalToConstant: 54),
+            emailField.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: Layout.fieldGroupTopSpacing),
+            emailField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.horizontalPadding),
+            emailField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Layout.horizontalPadding),
+            emailField.heightAnchor.constraint(equalToConstant: Layout.fieldHeight),
 
-            emailErrorLabel.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: 4),
-            emailErrorLabel.leadingAnchor.constraint(equalTo: emailField.leadingAnchor, constant: 4),
+            emailErrorLabel.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: Layout.errorLabelTopSpacing),
+            emailErrorLabel.leadingAnchor.constraint(equalTo: emailField.leadingAnchor, constant: Layout.errorLabelLeadingInset),
 
-            passwordField.topAnchor.constraint(equalTo: emailErrorLabel.bottomAnchor, constant: 12),
+            passwordField.topAnchor.constraint(equalTo: emailErrorLabel.bottomAnchor, constant: Layout.fieldSpacing),
             passwordField.leadingAnchor.constraint(equalTo: emailField.leadingAnchor),
             passwordField.trailingAnchor.constraint(equalTo: emailField.trailingAnchor),
-            passwordField.heightAnchor.constraint(equalToConstant: 54),
+            passwordField.heightAnchor.constraint(equalToConstant: Layout.fieldHeight),
 
-            passwordErrorLabel.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 4),
-            passwordErrorLabel.leadingAnchor.constraint(equalTo: passwordField.leadingAnchor, constant: 4),
+            passwordErrorLabel.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: Layout.errorLabelTopSpacing),
+            passwordErrorLabel.leadingAnchor.constraint(equalTo: passwordField.leadingAnchor, constant: Layout.errorLabelLeadingInset),
 
-            submitButton.topAnchor.constraint(equalTo: passwordErrorLabel.bottomAnchor, constant: 32),
+            submitButton.topAnchor.constraint(equalTo: passwordErrorLabel.bottomAnchor, constant: Layout.buttonTopSpacing),
             submitButton.leadingAnchor.constraint(equalTo: emailField.leadingAnchor),
             submitButton.trailingAnchor.constraint(equalTo: emailField.trailingAnchor),
-            submitButton.heightAnchor.constraint(equalToConstant: 54),
-            submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -40)
+            submitButton.heightAnchor.constraint(equalToConstant: Layout.fieldHeight),
+            submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Layout.bottomSpacing)
         ])
     }
 
@@ -228,7 +250,7 @@ final class LoginViewController: UIViewController {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
               let window = appDelegate.window else { return }
         window.rootViewController = MainTabBarController()
-        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil)
+        UIView.transition(with: window, duration: Layout.transitionDuration, options: .transitionCrossDissolve, animations: nil)
     }
 
     // MARK: - Keyboard

@@ -4,6 +4,12 @@ import RxCocoa
 
 final class FavoritesViewController: UIViewController {
 
+    // MARK: - Layout Constants
+    private enum Layout {
+        static let estimatedRowHeight: CGFloat = 90
+        static let emptyLabelFontSize: CGFloat = 16
+    }
+
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let viewModel = FavoritesViewModel()
@@ -17,18 +23,18 @@ final class FavoritesViewController: UIViewController {
         tv.backgroundColor = .appSurface
         tv.register(FavoriteTableViewCell.self, forCellReuseIdentifier: FavoriteTableViewCell.reuseID)
         tv.rowHeight = UITableView.automaticDimension
-        tv.estimatedRowHeight = 90
+        tv.estimatedRowHeight = Layout.estimatedRowHeight
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
     }()
 
     private let emptyLabel: UILabel = {
         let l = UILabel()
-        l.text = "No favorites yet.\nTap a post to add it."
+        l.text = Strings.Favorites.emptyMessage
         l.numberOfLines = 2
         l.textAlignment = .center
         l.textColor = .secondaryLabel
-        l.font = .systemFont(ofSize: 16, weight: .regular)
+        l.font = .systemFont(ofSize: Layout.emptyLabelFontSize, weight: .regular)
         l.isHidden = true
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
@@ -37,7 +43,7 @@ final class FavoritesViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Favorites"
+        title = Strings.Favorites.tabTitle
         view.backgroundColor = .appSurface
         setupLayout()
         tableView.delegate = self
@@ -83,7 +89,7 @@ extension FavoritesViewController: UITableViewDelegate {
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
-        let delete = UIContextualAction(style: .destructive, title: "Remove") { [weak self] _, _, completion in
+        let delete = UIContextualAction(style: .destructive, title: Strings.Favorites.removeAction) { [weak self] _, _, completion in
             guard let self, indexPath.row < self.currentPostIds.count else {
                 completion(false)
                 return
