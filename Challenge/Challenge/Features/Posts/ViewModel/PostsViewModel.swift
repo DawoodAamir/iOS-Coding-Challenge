@@ -10,6 +10,10 @@ final class PostsViewModel {
     let posts: Driver<[PostObject]>
     let isLoading: Driver<Bool>
     let errorMessage: Signal<String>
+    let logoutSuccess: Signal<Void>
+
+    // MARK: - Inputs
+    let logoutTap = PublishRelay<Void>()
 
     private let disposeBag = DisposeBag()
     private let loadingRelay = BehaviorRelay<Bool>(value: false)
@@ -19,11 +23,17 @@ final class PostsViewModel {
         isLoading = loadingRelay.asDriver()
         errorMessage = errorRelay.asSignal()
 
-        // Observe Realm results reactively with RxRealm
-        let realmResults = RealmManager.shared.allPosts()
-        posts = Observable.collection(from: realmResults)
-            .map { Array($0) }
-            .asDriver(onErrorJustReturn: [])
+        if let realmResults = RealmManager.shared.allPosts() {
+            posts = Observable.collection(from: realmResults)
+                .map { Array($0) }
+                .asDriver(onErrorJustReturn: [])
+        } else {
+            posts = .just([])
+        }
+
+        logoutSuccess = logoutTap
+            .do(onNext: { UserSessionManager.shared.logout() })
+            .asSignal(onErrorSignalWith: .empty())
     }
 
     func loadPosts() {
@@ -37,7 +47,6 @@ final class PostsViewModel {
                 },
                 onFailure: { [weak self] _ in
                     self?.loadingRelay.accept(false)
-                    // Cached data already drives the table; surface a subtle banner only
                     self?.errorRelay.accept("Could not refresh — showing cached posts")
                 }
             )

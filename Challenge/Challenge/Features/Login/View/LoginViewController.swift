@@ -203,22 +203,19 @@ final class LoginViewController: UIViewController {
             .drive(submitButton.rx.alpha)
             .disposed(by: disposeBag)
 
-        // Show inline errors only after first edit
-        emailText.skip(1)
-            .map { email -> Bool in
-                guard !email.isEmpty else { return true }
-                let regex = "[A-Z0-9a-z._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}"
-                return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: email)
-            }
-            .bind(to: emailErrorLabel.rx.isHidden)
+        // Show inline errors only after the user has started typing (skip initial value)
+        output.isEmailValid
+            .asObservable()
+            .skip(1)
+            .asDriver(onErrorJustReturn: true)
+            .drive(emailErrorLabel.rx.isHidden)
             .disposed(by: disposeBag)
 
-        passwordText.skip(1)
-            .map { pw -> Bool in
-                guard !pw.isEmpty else { return true }
-                return (8...15).contains(pw.count)
-            }
-            .bind(to: passwordErrorLabel.rx.isHidden)
+        output.isPasswordValid
+            .asObservable()
+            .skip(1)
+            .asDriver(onErrorJustReturn: true)
+            .drive(passwordErrorLabel.rx.isHidden)
             .disposed(by: disposeBag)
 
         output.loginSuccess

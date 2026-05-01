@@ -105,6 +105,10 @@ final class PostsViewController: UIViewController {
                 self?.viewModel.loadPosts()
             })
             .disposed(by: disposeBag)
+
+        viewModel.logoutSuccess
+            .emit(onNext: { [weak self] in self?.performLogout() })
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Actions
@@ -112,13 +116,12 @@ final class PostsViewController: UIViewController {
         let alert = UIAlertController(title: "Logout", message: "Are you sure?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.addAction(UIAlertAction(title: "Logout", style: .destructive) { [weak self] _ in
-            self?.performLogout()
+            self?.viewModel.logoutTap.accept(())
         })
         present(alert, animated: true)
     }
 
     private func performLogout() {
-        UserSessionManager.shared.logout()
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
               let window = appDelegate.window else { return }
         let nav = UINavigationController(rootViewController: LoginViewController())

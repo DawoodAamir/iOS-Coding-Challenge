@@ -12,22 +12,33 @@ final class LoginViewModel {
 
     struct Output {
         let isSubmitEnabled: Driver<Bool>
+        let isEmailValid: Driver<Bool>
+        let isPasswordValid: Driver<Bool>
         let loginSuccess: Signal<Void>
     }
 
     func transform(input: Input) -> Output {
-        let isEmailValid = input.email.map { Self.isValidEmail($0) }
-        let isPasswordValid = input.password.map { Self.isValidPassword($0) }
-
-        let isSubmitEnabled = Observable
-            .combineLatest(isEmailValid, isPasswordValid) { $0 && $1 }
+        let isEmailValid = input.email
+            .map { Self.isValidEmail($0) }
             .asDriver(onErrorJustReturn: false)
+
+        let isPasswordValid = input.password
+            .map { Self.isValidPassword($0) }
+            .asDriver(onErrorJustReturn: false)
+
+        let isSubmitEnabled = Driver
+            .combineLatest(isEmailValid, isPasswordValid) { $0 && $1 }
 
         let loginSuccess = input.submitTap
             .do(onNext: { UserSessionManager.shared.login() })
             .asSignal(onErrorSignalWith: .empty())
 
-        return Output(isSubmitEnabled: isSubmitEnabled, loginSuccess: loginSuccess)
+        return Output(
+            isSubmitEnabled: isSubmitEnabled,
+            isEmailValid: isEmailValid,
+            isPasswordValid: isPasswordValid,
+            loginSuccess: loginSuccess
+        )
     }
 
     private static func isValidEmail(_ email: String) -> Bool {
