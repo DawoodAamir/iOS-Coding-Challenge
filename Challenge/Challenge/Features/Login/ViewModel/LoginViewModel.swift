@@ -17,6 +17,12 @@ final class LoginViewModel {
         let loginSuccess: Signal<Void>
     }
 
+    private let session: UserSessionManagerProtocol
+
+    init(session: UserSessionManagerProtocol = UserSessionManager.shared) {
+        self.session = session
+    }
+
     func transform(input: Input) -> Output {
         let isEmailValid = input.email
             .map { Self.isValidEmail($0) }
@@ -29,8 +35,9 @@ final class LoginViewModel {
         let isSubmitEnabled = Driver
             .combineLatest(isEmailValid, isPasswordValid) { $0 && $1 }
 
+        let session = self.session
         let loginSuccess = input.submitTap
-            .do(onNext: { UserSessionManager.shared.login() })
+            .do(onNext: { session.login() })
             .asSignal(onErrorSignalWith: .empty())
 
         return Output(

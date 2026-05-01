@@ -8,8 +8,12 @@ final class FavoritesViewModel {
 
     let favorites: Driver<[PostObject]>
 
-    init() {
-        if let results = RealmManager.shared.favoritePosts() {
+    private let realmManager: RealmManagerProtocol
+
+    init(realmManager: RealmManagerProtocol = RealmManager.shared) {
+        self.realmManager = realmManager
+
+        if let results = realmManager.favoritePosts() {
             favorites = Observable.collection(from: results)
                 .map { Array($0) }
                 .asDriver(onErrorJustReturn: [])
@@ -19,6 +23,6 @@ final class FavoritesViewModel {
     }
 
     func removeFromFavorites(postId: Int) {
-        RealmManager.shared.removeFromFavorites(postId: postId)
+        realmManager.removeFromFavorites(postId: postId)
     }
 }

@@ -15,15 +15,28 @@ final class PostsViewModel {
     // MARK: - Inputs
     let logoutTap = PublishRelay<Void>()
 
+    // MARK: - Dependencies
+    private let network: NetworkManagerProtocol
+    private let realmManager: RealmManagerProtocol
+    private let session: UserSessionManagerProtocol
+
     private let disposeBag = DisposeBag()
     private let loadingRelay = BehaviorRelay<Bool>(value: false)
     private let errorRelay = PublishRelay<String>()
 
-    init() {
+    init(
+        network: NetworkManagerProtocol = NetworkManager.shared,
+        realmManager: RealmManagerProtocol = RealmManager.shared,
+        session: UserSessionManagerProtocol = UserSessionManager.shared
+    ) {
+        self.network = network
+        self.realmManager = realmManager
+        self.session = session
+
         isLoading = loadingRelay.asDriver()
         errorMessage = errorRelay.asSignal()
 
-        if let realmResults = RealmManager.shared.allPosts() {
+        if let realmResults = realmManager.allPosts() {
             posts = Observable.collection(from: realmResults)
                 .map { Array($0) }
                 .asDriver(onErrorJustReturn: [])
@@ -32,17 +45,17 @@ final class PostsViewModel {
         }
 
         logoutSuccess = logoutTap
-            .do(onNext: { UserSessionManager.shared.logout() })
+            .do(onNext: { session.logout() })
             .asSignal(onErrorSignalWith: .empty())
     }
 
     func loadPosts() {
         loadingRelay.accept(true)
-        NetworkManager.shared.fetchPosts()
+        network.fetchPosts()
             .observe(on: MainScheduler.instance)
             .subscribe(
                 onSuccess: { [weak self] dtos in
-                    RealmManager.shared.savePosts(dtos)
+                    self?.realmManager.savePosts(dtos)
                     self?.loadingRelay.accept(false)
                 },
                 onFailure: { [weak self] _ in
@@ -54,6 +67,6 @@ final class PostsViewModel {
     }
 
     func toggleFavorite(postId: Int) {
-        RealmManager.shared.toggleFavorite(postId: postId)
+        realmManager.toggleFavorite(postId: postId)
     }
 }

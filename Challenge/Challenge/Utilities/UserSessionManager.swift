@@ -1,6 +1,12 @@
 import Foundation
 
-final class UserSessionManager {
+protocol UserSessionManagerProtocol {
+    var isLoggedIn: Bool { get }
+    func login()
+    func logout()
+}
+
+final class UserSessionManager: UserSessionManagerProtocol {
     static let shared = UserSessionManager()
     private init() {}
 

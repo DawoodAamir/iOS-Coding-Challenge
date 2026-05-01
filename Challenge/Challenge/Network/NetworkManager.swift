@@ -2,7 +2,11 @@ import Foundation
 import Alamofire
 import RxSwift
 
-final class NetworkManager {
+protocol NetworkManagerProtocol {
+    func fetchPosts() -> Single<[PostDTO]>
+}
+
+final class NetworkManager: NetworkManagerProtocol {
     static let shared = NetworkManager()
     private init() {}
 
