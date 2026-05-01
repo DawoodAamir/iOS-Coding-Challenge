@@ -7,7 +7,7 @@ import RealmSwift
 final class PostsViewModel {
 
     // MARK: - Outputs
-    let posts: Driver<[PostObject]>
+    let posts: Driver<[PostDisplayModel]>
     let isLoading: Driver<Bool>
     let errorMessage: Signal<String>
     let logoutSuccess: Signal<Void>
@@ -38,7 +38,7 @@ final class PostsViewModel {
 
         if let realmResults = realmManager.allPosts() {
             posts = Observable.collection(from: realmResults)
-                .map { Array($0) }
+                .map { $0.map(PostDisplayModel.init) }
                 .asDriver(onErrorJustReturn: [])
         } else {
             posts = .just([])

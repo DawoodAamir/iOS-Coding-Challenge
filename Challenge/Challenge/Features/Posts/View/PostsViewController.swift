@@ -72,8 +72,8 @@ final class PostsViewController: UIViewController {
             .drive(tableView.rx.items(
                 cellIdentifier: PostTableViewCell.reuseID,
                 cellType: PostTableViewCell.self
-            )) { _, post, cell in
-                cell.configure(with: post)
+            )) { _, model, cell in
+                cell.configure(with: model)
             }
             .disposed(by: disposeBag)
 
@@ -94,9 +94,9 @@ final class PostsViewController: UIViewController {
             })
             .disposed(by: disposeBag)
 
-        tableView.rx.modelSelected(PostObject.self)
-            .subscribe(onNext: { [weak self] post in
-                self?.viewModel.toggleFavorite(postId: post.id)
+        tableView.rx.modelSelected(PostDisplayModel.self)
+            .subscribe(onNext: { [weak self] model in
+                self?.viewModel.toggleFavorite(postId: model.id)
             })
             .disposed(by: disposeBag)
 

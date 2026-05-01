@@ -6,7 +6,7 @@ import RealmSwift
 
 final class FavoritesViewModel {
 
-    let favorites: Driver<[PostObject]>
+    let favorites: Driver<[PostDisplayModel]>
 
     private let realmManager: RealmManagerProtocol
 
@@ -15,7 +15,7 @@ final class FavoritesViewModel {
 
         if let results = realmManager.favoritePosts() {
             favorites = Observable.collection(from: results)
-                .map { Array($0) }
+                .map { $0.map(PostDisplayModel.init) }
                 .asDriver(onErrorJustReturn: [])
         } else {
             favorites = .just([])

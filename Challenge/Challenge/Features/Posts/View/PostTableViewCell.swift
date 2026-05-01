@@ -80,11 +80,10 @@ final class PostTableViewCell: UITableViewCell {
     }
 
     // MARK: - Configure
-    func configure(with post: PostObject) {
-        titleLabel.text = post.title.prefix(1).uppercased() + post.title.dropFirst()
-        bodyLabel.text = post.body
-        let imageName = post.isFavorite ? "heart.fill" : "heart"
-        favoriteIcon.image = UIImage(systemName: imageName)
-        favoriteIcon.tintColor = post.isFavorite ? .systemRed : .systemGray3
+    func configure(with model: PostDisplayModel) {
+        titleLabel.text = model.title
+        bodyLabel.text = model.body
+        favoriteIcon.image = UIImage(systemName: model.isFavorite ? "heart.fill" : "heart")
+        favoriteIcon.tintColor = model.isFavorite ? .systemRed : .systemGray3
     }
 }

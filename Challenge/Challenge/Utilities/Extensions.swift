@@ -10,15 +10,6 @@ extension UIView {
     func addSubviews(_ views: UIView...) {
         views.forEach { addSubview($0) }
     }
-
-    func pinEdges(to other: UIView, insets: UIEdgeInsets = .zero) {
-        NSLayoutConstraint.activate([
-            topAnchor.constraint(equalTo: other.topAnchor, constant: insets.top),
-            leadingAnchor.constraint(equalTo: other.leadingAnchor, constant: insets.left),
-            trailingAnchor.constraint(equalTo: other.trailingAnchor, constant: -insets.right),
-            bottomAnchor.constraint(equalTo: other.bottomAnchor, constant: -insets.bottom)
-        ])
-    }
 }
 
 extension UITextField {

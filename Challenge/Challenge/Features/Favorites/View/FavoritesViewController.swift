@@ -8,8 +8,7 @@ final class FavoritesViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let viewModel = FavoritesViewModel()
 
-    // Snapshot of current data for swipe-delete indexing
-    private var currentPosts: [PostObject] = []
+    private var currentPostIds: [Int] = []
 
     // MARK: - UI
     private let tableView: UITableView = {
@@ -64,15 +63,15 @@ final class FavoritesViewController: UIViewController {
     private func bindViewModel() {
         viewModel.favorites
             .do(onNext: { [weak self] posts in
-                self?.currentPosts = posts
+                self?.currentPostIds = posts.map { $0.id }
                 self?.emptyLabel.isHidden = !posts.isEmpty
                 self?.tableView.isHidden = posts.isEmpty
             })
             .drive(tableView.rx.items(
                 cellIdentifier: FavoriteTableViewCell.reuseID,
                 cellType: FavoriteTableViewCell.self
-            )) { _, post, cell in
-                cell.configure(with: post)
+            )) { _, model, cell in
+                cell.configure(with: model)
             }
             .disposed(by: disposeBag)
     }
@@ -85,11 +84,11 @@ extension FavoritesViewController: UITableViewDelegate {
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .destructive, title: "Remove") { [weak self] _, _, completion in
-            guard let self, indexPath.row < self.currentPosts.count else {
+            guard let self, indexPath.row < self.currentPostIds.count else {
                 completion(false)
                 return
             }
-            let postId = self.currentPosts[indexPath.row].id
+            let postId = self.currentPostIds[indexPath.row]
             self.viewModel.removeFromFavorites(postId: postId)
             completion(true)
         }

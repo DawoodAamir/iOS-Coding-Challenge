@@ -76,8 +76,8 @@ final class FavoriteTableViewCell: UITableViewCell {
         ])
     }
 
-    func configure(with post: PostObject) {
-        titleLabel.text = post.title.prefix(1).uppercased() + post.title.dropFirst()
-        bodyLabel.text = post.body
+    func configure(with model: PostDisplayModel) {
+        titleLabel.text = model.title
+        bodyLabel.text = model.body
     }
 }
